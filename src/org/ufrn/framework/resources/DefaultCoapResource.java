@@ -36,6 +36,12 @@ public class DefaultCoapResource extends AbstractCoapResource{
 		exchange.respond(resultQuery);
 	}
 	
+	@Override
+	public void handlePUT(CoapExchange exchange) {
+		
+		
+	}
+	
 	public String getUrlAcess() {
 		return urlAcess;
 	}

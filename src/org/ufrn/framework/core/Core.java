@@ -39,7 +39,9 @@ public class Core {
 
 	public static void start() {
 		try {
+		
 			BasicConfigurator.configure();
+			logger.info("EasyIoT initializing...");
 			Properties props = Core.getProps();
 			List<IProxy> proxyIdentifiers = Core
 					.discoveryProxy(props.getProperty(Core.PROPERTY_PROXY_DEFINITION_USER));
@@ -61,6 +63,11 @@ public class Core {
 			e.printStackTrace();
 		}
 	}
+	
+	public static void stop() {
+		SampleCoapServer.getInstance().stop();
+		logger.info("EasyIoT is stoped.");
+	}
 
 	private static void verifyAndExecuteComunicationClass() 
 			throws IOException, 
@@ -78,7 +85,7 @@ public class Core {
 		FileInputStream file = new FileInputStream(Core.PROPERTIES_PATH);
 		props.load(file);
 		return props;
-	}
+	}	
 	
 	private static void executeComunicationClass(String packageComunication) 
 			throws ClassNotFoundException, 

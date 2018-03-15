@@ -1,1 +1,2 @@
-Enterprise SenTempMod1 v1 -> GetTemperature
+Device -> Action
+Enterprise SenTempMod1 v1 -> GetTemperature(ActionArgument, OUT) temperature,

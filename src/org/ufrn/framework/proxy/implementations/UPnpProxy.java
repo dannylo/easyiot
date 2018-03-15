@@ -3,6 +3,7 @@ package org.ufrn.framework.proxy.implementations;
 import java.io.IOException;
 import java.nio.MappedByteBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,11 +53,18 @@ public class UPnpProxy implements IProxy {
 				entity.setServer(new CoapServer());
 
 				List<String> actionsRepport = new ArrayList<>();
-				for (RemoteService serviceRemote : device.getServices()) {
+				for (RemoteService serviceRemote : device.getServices()) {					
 					mapServices.put(serviceRemote.getServiceId().getId(), serviceRemote);
-					for (Action action : serviceRemote.getActions()) {
-						if (!action.hasInputArguments()) {	
-							actionsRepport.add(entity.getIdentification().getDescriptionName() + "-" + action.getName());
+					for (Action action : serviceRemote.getActions()) {						
+						StringBuilder actionCaptured = new StringBuilder();
+						if (!action.hasInputArguments()) {						
+							actionCaptured.append(entity.getIdentification().getDescriptionName());
+							actionCaptured.append("-");
+							actionCaptured.append(action.getName());
+							Arrays.asList(action.getOutputArguments()).forEach(argument -> actionCaptured.append(argument + ","));
+							System.out.println(actionCaptured.toString());						
+							actionsRepport.add(actionCaptured.toString());
+							
 							DefaultCoapResource coap = new DefaultCoapResource(action.getName(), UPnpProxy.this, entity,
 									serviceRemote.getServiceId().getId(), action.getName());
 							entity.getMappingResources().put(action.getName(), coap);
@@ -90,11 +98,6 @@ public class UPnpProxy implements IProxy {
 	}
 
 	@Override
-	public boolean send(VirtualEntity virtualEntity) {
-		return false;
-	}
-
-	@Override
 	public Map<String, String> getData(VirtualEntity virtualEntity, String serviceDescription,
 			String actionDescription) {
 
@@ -109,6 +112,11 @@ public class UPnpProxy implements IProxy {
 		}
 
 		return results;
+	}
+
+	@Override
+	public boolean send(VirtualEntity virtualEntity, String service, String actionConfiguration) {
+		return false;
 	}
 
 }
