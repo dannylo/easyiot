@@ -13,6 +13,7 @@ import org.teleal.cling.UpnpService;
 import org.teleal.cling.UpnpServiceImpl;
 import org.teleal.cling.controlpoint.ActionCallback;
 import org.teleal.cling.model.action.ActionInvocation;
+import org.teleal.cling.model.message.UpnpResponse;
 import org.teleal.cling.model.message.header.STAllHeader;
 import org.teleal.cling.model.meta.Action;
 import org.teleal.cling.model.meta.ActionArgument;
@@ -26,7 +27,9 @@ import org.ufrn.framework.annotation.ProxyTranslate;
 import org.ufrn.framework.coapserver.SampleCoapServer;
 import org.ufrn.framework.database.access.Database;
 import org.ufrn.framework.proxy.interfaces.IProxy;
-import org.ufrn.framework.resources.DefaultCoapResource;
+import org.ufrn.framework.resources.DefaultCoapInputResource;
+import org.ufrn.framework.resources.DefaultCoapOutputResource;
+import org.ufrn.framework.util.ActionUpnpDefault;
 import org.ufrn.framework.util.ManagerFile;
 import org.ufrn.framework.virtualentity.Identification;
 import org.ufrn.framework.virtualentity.VirtualEntity;
@@ -34,11 +37,17 @@ import org.ufrn.framework.virtualentity.VirtualEntity;
 @ProxyTranslate(description = "UPnP")
 public class UPnpProxy implements IProxy {
 
-	private UpnpService service;
+	private UpnpService upnpService;
 	private Map<String, Service> mapServices = new HashMap<>();
+	private List<String> actionsRepport = new ArrayList<>();
+
+	public static final String ACTION_KEY = "ACTION_KEY";
+	public static final String SERVICE_KEY = "SERVICE_KEY";
+
+	private boolean successOperation = false;
 
 	public UPnpProxy() {
-		this.service = new UpnpServiceImpl();
+		this.upnpService = new UpnpServiceImpl();
 	}
 
 	private void createListenerUpnp() {
@@ -52,27 +61,47 @@ public class UPnpProxy implements IProxy {
 				entity.getIdentification().setIdProtocol(device.getType().getDisplayString());
 				entity.setServer(new CoapServer());
 
-				List<String> actionsRepport = new ArrayList<>();
-				for (RemoteService serviceRemote : device.getServices()) {					
+				for (RemoteService serviceRemote : device.getServices()) {
 					mapServices.put(serviceRemote.getServiceId().getId(), serviceRemote);
-					for (Action action : serviceRemote.getActions()) {						
+					for (Action action : serviceRemote.getActions()) {
 						StringBuilder actionCaptured = new StringBuilder();
-						if (!action.hasInputArguments()) {						
+						System.out.println(action.getName() + " " + action.hasInputArguments());
+						if (!action.hasInputArguments()) {
+							System.out.println("NAO TEM ARGUMENTOS DE ENTRADA!");
 							actionCaptured.append(entity.getIdentification().getDescriptionName());
-							actionCaptured.append("-");
+							actionCaptured.append("@");
 							actionCaptured.append(action.getName());
-							Arrays.asList(action.getOutputArguments()).forEach(argument -> actionCaptured.append(argument + ","));
-							System.out.println(actionCaptured.toString());						
+							actionCaptured.append(": ");
+							Arrays.asList(action.getOutputArguments())
+									.forEach(argument -> actionCaptured.append(argument + ","));
+							actionsRepport.add(actionCaptured.toString());
+
+							DefaultCoapOutputResource coap = new DefaultCoapOutputResource(action.getName(),
+									UPnpProxy.this, entity, serviceRemote.getServiceId().getId(), action.getName());
+							entity.getMappingResources().put(action.getName(), coap);
+							SampleCoapServer.getInstance().add(coap);
+						} else if(action.hasInputArguments()){
+							System.out.println("TEM ARGUMENTOS DE ENTRADA!");
+							actionCaptured.append(entity.getIdentification().getDescriptionName());
+							actionCaptured.append("@");
+							actionCaptured.append(action.getName() + "(");
+							Arrays.asList(action.getInputArguments())
+									.forEach(argument -> actionCaptured.append(argument + ","));
+							actionCaptured.append(")");
 							actionsRepport.add(actionCaptured.toString());
 							
-							DefaultCoapResource coap = new DefaultCoapResource(action.getName(), UPnpProxy.this, entity,
-									serviceRemote.getServiceId().getId(), action.getName());
+							DefaultCoapInputResource coap = new DefaultCoapInputResource(action.getName(),
+									UPnpProxy.this, 
+									entity, 
+									serviceRemote.getServiceId().getId(), 
+									action.getName());
 							entity.getMappingResources().put(action.getName(), coap);
 							SampleCoapServer.getInstance().add(coap);
 						}
 					}
 				}
 				Database.register(entity);
+				System.out.println("qtd de registros - "+ actionsRepport.size());
 				try {
 					ManagerFile.createFileActionsDiscovery(actionsRepport);
 				} catch (IOException e) {
@@ -81,8 +110,8 @@ public class UPnpProxy implements IProxy {
 			}
 		};
 
-		service.getRegistry().addListener(listenerNetwork);
-		service.getControlPoint().search(new STAllHeader());
+		upnpService.getRegistry().addListener(listenerNetwork);
+		upnpService.getControlPoint().search(new STAllHeader());
 	}
 
 	@Override
@@ -94,29 +123,53 @@ public class UPnpProxy implements IProxy {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		
+
 	}
 
 	@Override
-	public Map<String, String> getData(VirtualEntity virtualEntity, String serviceDescription,
-			String actionDescription) {
-
-		Service serviceUse = mapServices.get(serviceDescription);
-		Action action = serviceUse.getAction(actionDescription);
+	public Map<String, String> getData(VirtualEntity virtualEntity, Map<String, String> mappingArguments) {
+		Service serviceUse = mapServices.get(mappingArguments.get(UPnpProxy.SERVICE_KEY));
+		Action action = serviceUse.getAction(mappingArguments.get(UPnpProxy.ACTION_KEY));
 		ActionInvocation actionInvocation = new ActionInvocation(action);
 
-		new ActionCallback.Default(actionInvocation, service.getControlPoint()).run();
+		new ActionCallback.Default(actionInvocation, upnpService.getControlPoint()).run();
 		HashMap<String, String> results = new HashMap<>();
 		for (ActionArgument actionArgument : action.getOutputArguments()) {
-			results.put(actionArgument.getName(),  String.valueOf(actionInvocation.getOutput(actionArgument).getValue()));
+			results.put(actionArgument.getName(),
+					String.valueOf(actionInvocation.getOutput(actionArgument).getValue()));
 		}
 
 		return results;
 	}
 
 	@Override
-	public boolean send(VirtualEntity virtualEntity, String service, String actionConfiguration) {
-		return false;
+	public boolean send(VirtualEntity virtualEntity, Map<String, String> mappingArguments,
+			Map<String, String> mappingValues) throws InterruptedException {
+		Service serviceUse = mapServices.get(mappingArguments.get(UPnpProxy.SERVICE_KEY));
+		Action action = serviceUse.getAction(mappingArguments.get(UPnpProxy.ACTION_KEY));
+		//mappingValues deve mapear todos os argumentos e novos valores que serão submetidos ao dispositivo para a mudança.
+		for (String argument : mappingValues.keySet()) {
+			ActionUpnpDefault actionInvocation = new ActionUpnpDefault(action, argument, mappingValues.get(argument));
+
+			boolean success = false;
+
+			this.upnpService.getControlPoint().execute(new ActionCallback(actionInvocation) {
+				@Override
+				public void success(ActionInvocation arg0) {
+					successOperation = true;
+				}
+
+				@Override
+				public void failure(ActionInvocation arg0, UpnpResponse arg1, String arg2) {
+					successOperation = false;
+				}
+			});
+
+			Thread.sleep(1000);
+
+		}
+
+		return successOperation;
 	}
 
 }

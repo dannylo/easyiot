@@ -8,11 +8,10 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.eclipse.californium.core.CoapResource;
 import org.ufrn.framework.resources.AbstractCoapResource;
-import org.ufrn.framework.resources.DefaultCoapResource;
+import org.ufrn.framework.resources.DefaultCoapOutputResource;
 
 public abstract class ComunicableEntity {
 
-	// cada registro guarda a entidade interessada e a ação que ela deverá escutar.
 	private List<HashMap<VirtualEntity, String>> interestedEntitys = new ArrayList<>();
 	
 	private Logger logger = Logger.getLogger(ComunicableEntity.class);
@@ -29,12 +28,11 @@ public abstract class ComunicableEntity {
 	}
 
 	public void notifyStateOfActions(VirtualEntity self) {
-		// resultados mapeados: Ação ouvida, e resultado da ação.
 		HashMap<String, String> mappingResults = new HashMap<String, String>();
 		for (HashMap<VirtualEntity, String> register : interestedEntitys) {
 			VirtualEntity entity = register.keySet().stream().findFirst().get();
 			AbstractCoapResource resource = self.getMappingResources().get(register.get(entity));	
-			String responseAction = self.launchEvent(((DefaultCoapResource) resource).getUrlAcess());
+			String responseAction = self.launchEvent(((DefaultCoapOutputResource) resource).getUrlAcess());
 			mappingResults.put(register.get(entity), responseAction);	
 			entity.setMappingValuesListen(mappingResults);
 		}

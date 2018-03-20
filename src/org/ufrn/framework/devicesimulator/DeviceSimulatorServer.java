@@ -1,8 +1,5 @@
 package org.ufrn.framework.devicesimulator;
 
-import java.awt.List;
-import java.lang.annotation.Annotation;
-import java.lang.invoke.SwitchPoint;
 
 import org.teleal.cling.UpnpService;
 import org.teleal.cling.UpnpServiceImpl;
@@ -17,10 +14,6 @@ import org.teleal.cling.model.meta.ModelDetails;
 import org.teleal.cling.model.types.DeviceType;
 import org.teleal.cling.model.types.UDADeviceType;
 import org.teleal.cling.model.types.UDN;
-import org.ufrn.framework.database.access.Database;
-import org.ufrn.framework.proxy.implementations.UPnpProxy;
-import org.ufrn.framework.proxy.interfaces.IProxy;
-import org.ufrn.framework.virtualentity.VirtualEntity;
 
 
 public class DeviceSimulatorServer implements Runnable {

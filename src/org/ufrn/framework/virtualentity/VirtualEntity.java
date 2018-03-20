@@ -8,8 +8,13 @@ import java.util.TimerTask;
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapResponse;
 import org.eclipse.californium.core.CoapServer;
+import org.eclipse.californium.core.coap.MediaTypeRegistry;
 import org.ufrn.framework.proxy.interfaces.IProxy;
-import org.ufrn.framework.resources.DefaultCoapResource;
+import org.ufrn.framework.resources.AbstractCoapResource;
+import org.ufrn.framework.resources.DefaultCoapInputResource;
+import org.ufrn.framework.resources.DefaultCoapOutputResource;
+
+import com.google.gson.Gson;
 
 public class VirtualEntity extends ComunicableEntity  {	
 	
@@ -18,7 +23,7 @@ public class VirtualEntity extends ComunicableEntity  {
 	private Identification identification;
 	private CoapServer server;
 	private CoapClient client;
-	private Map<String, DefaultCoapResource> mappingResources;
+	private Map<String, AbstractCoapResource> mappingResources;
 	private IProxy proxy;
 	private HashMap<String, String> mappingValuesListen;
 		
@@ -42,8 +47,13 @@ public class VirtualEntity extends ComunicableEntity  {
 		return response.getResponseText();		
 	}
 	
-	public String sendEvent(String action) {
-		return null;
+	public void sendEvent(String action, Map<String, String> newValues) {
+		DefaultCoapInputResource coapResource = (DefaultCoapInputResource) mappingResources.get(action);
+		
+		Gson gson = new Gson();		
+		String json = gson.toJson(newValues);
+	//	this.client = new CoapClient(actionCoap.getUrlAcess()); //??? TODO: Implementar esse método para os recursos de entrada do CoAP, e testar.
+		this.client.put(json, MediaTypeRegistry.APPLICATION_JSON);
 	}
 		
     public void listenExternalEntity(VirtualEntity externalEntity, String actionDescription) {
@@ -91,7 +101,7 @@ public class VirtualEntity extends ComunicableEntity  {
 		this.client = client;
 	}
 	
-	public Map<String, DefaultCoapResource> getMappingResources() {
+	public Map<String, AbstractCoapResource> getMappingResources() {
 		return mappingResources;
 	}
 	

@@ -8,9 +8,12 @@ public interface IProxy {
 
 	void discoveryAll();
 	
-	boolean send(VirtualEntity virtualEntity, String service, String actionConfiguration);
+	boolean send(VirtualEntity virtualEntity, 
+			Map<String, String> mappingArguments,
+			Map<String, String> mappingValues) throws InterruptedException;
 	
-	Map<String, String> getData(VirtualEntity virtualEntity, String serviceDescription, String actionDescription);
+	Map<String, String> getData(VirtualEntity virtualEntity, 
+			Map<String, String> mappingArguments);
 	
 	
 }

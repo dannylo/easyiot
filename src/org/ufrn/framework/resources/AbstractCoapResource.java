@@ -1,5 +1,7 @@
 package org.ufrn.framework.resources;
 
+import java.util.Map;
+
 import org.eclipse.californium.core.CoapResource;
 import org.eclipse.californium.core.server.resources.CoapExchange;
 import org.ufrn.framework.proxy.interfaces.IProxy;
@@ -13,7 +15,7 @@ public abstract class AbstractCoapResource extends CoapResource {
 	protected VirtualEntity virtualEntity;
 	protected String serviceDescription;
 	protected String actionDescription;
-	protected String urlAcess;
+	protected String urlAcess;	
 
 	public AbstractCoapResource(String name) {
 		super(name);

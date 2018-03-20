@@ -1,2 +1,6 @@
-Device -> Action
-Enterprise SenTempMod1 v1 -> GetTemperature(ActionArgument, OUT) temperature,
+Pattern: Device name -> Action name enabled(input argument name): output argument name
+----------------------------------------------------------------------------------------
+D-LINK DIR-610 1.0.0 -> SetDefaultConnectionService((ActionArgument, IN) NewDefaultConnectionService,)
+D-LINK DIR-610 1.0.0 -> GetDefaultConnectionService: (ActionArgument, OUT) NewDefaultConnectionService,
+Enterprise SenTempMod1 v1 -> GetTemperature: (ActionArgument, OUT) temperature,
+Enterprise TermostateContrMod1 v1 -> SetTemperatureValue((ActionArgument, IN) TemperatureValue,)

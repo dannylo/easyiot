@@ -31,11 +31,13 @@ public class ComunicationExample implements IComunication {
 	@CheckMethod
 	public void check() {
 		if (termostato.getMappingValuesListen() != null) {
-			String value = ManagerResultAction
-					.getValue(termostato.getMappingValuesListen().get(ACTION)).get(OUTPUT);
-			if (value != null) {
-				if (Double.parseDouble(value) <= 0.0) {
-					System.err.println("IT'S VERY COLD, MODIFY TERMOSTATE STATUS!!");
+			if (termostato.getMappingValuesListen().get(ACTION) != null) {
+				String value = ManagerResultAction.getValue(termostato.getMappingValuesListen().get(ACTION))
+						.get(OUTPUT);
+				if (value != null) {
+					if (Double.parseDouble(value) <= 0.0) {
+						System.err.println("IT'S VERY COLD, MODIFY TERMOSTATE STATUS!!");
+					}
 				}
 			}
 		}

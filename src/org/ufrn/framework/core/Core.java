@@ -123,7 +123,6 @@ public class Core {
 						for(Method check: checkMethods) {
 							try {
 								check.invoke(comunication);
-								logger.info("Check method "+ check.getName() + " was executed.");
 							} catch (IllegalAccessException e) {
 								e.printStackTrace();
 							} catch (IllegalArgumentException e) {
@@ -184,5 +183,9 @@ public class Core {
 		}
 
 		return proxys;
+	}
+	
+	public static Logger getLogger() {
+		return logger;
 	}
 }

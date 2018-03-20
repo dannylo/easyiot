@@ -14,9 +14,10 @@ public class ManagerFile {
 		File file = new File("actions_discovered");
 		FileWriter fw = new FileWriter(file);
 		PrintWriter printer = new PrintWriter(fw);
-		printer.println("Device -> Action");
+		printer.println("Pattern: Device name -> Action name enabled(input argument name): output argument name");
+		printer.println("----------------------------------------------------------------------------------------");		
 		for(String actionMapping: mappingActions) {
-			String[] breakString = actionMapping.split("-");
+			String[] breakString = actionMapping.split("@");
 			printer.println(breakString[0] + " -> "+ breakString[1]);
 		}
 		printer.close();
