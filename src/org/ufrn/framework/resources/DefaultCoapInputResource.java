@@ -9,7 +9,7 @@ import org.eclipse.californium.core.server.resources.CoapExchange;
 import org.ufrn.framework.core.Core;
 import org.ufrn.framework.proxy.implementations.UPnpProxy;
 import org.ufrn.framework.proxy.interfaces.IProxy;
-import org.ufrn.framework.virtualentity.VirtualEntity;
+import org.ufrn.framework.virtualentity.VirtualDevice;
 
 import com.google.gson.Gson;
 
@@ -19,7 +19,7 @@ public class DefaultCoapInputResource extends AbstractCoapResource {
 		super(name);
 	}
 
-	public DefaultCoapInputResource(String name, IProxy proxy, VirtualEntity virtualEntity, String serviceDescription,
+	public DefaultCoapInputResource(String name, IProxy proxy, VirtualDevice virtualEntity, String serviceDescription,
 			String actionDescription) {
 
 		super(name);

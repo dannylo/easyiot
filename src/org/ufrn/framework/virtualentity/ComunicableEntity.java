@@ -12,29 +12,30 @@ import org.ufrn.framework.resources.DefaultCoapOutputResource;
 
 public abstract class ComunicableEntity {
 
-	private List<HashMap<VirtualEntity, String>> interestedEntitys = new ArrayList<>();
+	private List<HashMap<VirtualDevice, String>> interestedEntitys = new ArrayList<>();
 	
 	private Logger logger = Logger.getLogger(ComunicableEntity.class);
 
-	public void registerActionListener(VirtualEntity entity, String actionDescription) {
+	public void registerActionListener(VirtualDevice entity, String actionDescription) {
 		
 		if (interestedEntitys == null) {
 			interestedEntitys = new ArrayList<>();
 		}
-		HashMap<VirtualEntity, String> register = new HashMap<>();
+		HashMap<VirtualDevice, String> register = new HashMap<>();
 		register.put(entity, actionDescription);
 		interestedEntitys.add(register);
 		logger.info("A virtual entity "+ entity.getIdentification().getDescriptionName() + " was registered as a listener.");
 	}
 
-	public void notifyStateOfActions(VirtualEntity self) {
+	@Deprecated
+	public void notifyStateOfActions(VirtualDevice self) {
 		HashMap<String, String> mappingResults = new HashMap<String, String>();
-		for (HashMap<VirtualEntity, String> register : interestedEntitys) {
-			VirtualEntity entity = register.keySet().stream().findFirst().get();
+		for (HashMap<VirtualDevice, String> register : interestedEntitys) {
+			VirtualDevice entity = register.keySet().stream().findFirst().get();
 			AbstractCoapResource resource = self.getMappingResources().get(register.get(entity));	
-			String responseAction = self.launchEvent(((DefaultCoapOutputResource) resource).getUrlAcess());
-			mappingResults.put(register.get(entity), responseAction);	
-			entity.setMappingValuesListen(mappingResults);
+			//String responseAction = self.getDataEvent(((DefaultCoapOutputResource) resource).getUrlAcess());
+			//mappingResults.put(register.get(entity), responseAction);	
+			//entity.setMappingValuesListen(mappingResults);
 		}
 	}
 	

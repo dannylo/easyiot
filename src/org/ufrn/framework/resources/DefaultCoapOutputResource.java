@@ -6,7 +6,7 @@ import java.util.Map;
 import org.eclipse.californium.core.server.resources.CoapExchange;
 import org.ufrn.framework.proxy.implementations.UPnpProxy;
 import org.ufrn.framework.proxy.interfaces.IProxy;
-import org.ufrn.framework.virtualentity.VirtualEntity;
+import org.ufrn.framework.virtualentity.VirtualDevice;
 
 import com.google.gson.Gson;
 
@@ -19,7 +19,7 @@ public class DefaultCoapOutputResource extends AbstractCoapResource{
 	
 	public DefaultCoapOutputResource(String name, 
 			IProxy proxy, 
-			VirtualEntity virtualEntity, 
+			VirtualDevice virtualEntity, 
 			String serviceDescription, 
 			String actionDescription) {
 		
@@ -42,11 +42,6 @@ public class DefaultCoapOutputResource extends AbstractCoapResource{
 		exchange.respond(resultQuery);
 	}
 	
-	@Override
-	public void handlePUT(CoapExchange exchange) {
-		
-		
-	}
 	
 	public String getUrlAcess() {
 		return urlAcess;

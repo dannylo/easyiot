@@ -11,5 +11,8 @@
 	<classpathentry kind="lib" path="/home/dannylo/eclipse-workspace/master-prototype/lib/javassist.jar"/>
 	<classpathentry kind="lib" path="/home/dannylo/eclipse-workspace/master-prototype/lib/guava-24.0-jre.jar"/>
 	<classpathentry kind="lib" path="/home/dannylo/eclipse-workspace/master-prototype/lib/log4j-1.2.17.jar"/>
+	<classpathentry kind="con" path="org.eclipse.ajdt.core.ASPECTJRT_CONTAINER"/>
+	<classpathentry kind="lib" path="/home/dannylo/eclipse-workspace/master-prototype/lib/commons-text-1.2.jar"/>
+	<classpathentry kind="lib" path="/home/dannylo/eclipse-workspace/master-prototype/lib/j-text-utils-0.3.4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

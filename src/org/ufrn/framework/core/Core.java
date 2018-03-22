@@ -39,14 +39,14 @@ public class Core {
 
 	public static void start() {
 		try {
-		
+			SampleCoapServer.getInstance().stop();
 			BasicConfigurator.configure();
 			logger.info("EasyIoT initializing...");
 			Properties props = Core.getProps();
 			List<IProxy> proxyIdentifiers = Core
 					.discoveryProxy(props.getProperty(Core.PROPERTY_PROXY_DEFINITION_USER));
 			proxyIdentifiers.forEach(proxy -> proxy.discoveryAll());
-			Core.verifyAndExecuteComunicationClass();
+			//Core.verifyAndExecuteComunicationClass();
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (InstantiationException e) {
@@ -59,9 +59,7 @@ public class Core {
 			e.printStackTrace();
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
-		}
+		} 
 	}
 	
 	public static void stop() {
@@ -69,6 +67,7 @@ public class Core {
 		logger.info("EasyIoT is stoped.");
 	}
 
+	@Deprecated
 	private static void verifyAndExecuteComunicationClass() 
 			throws IOException, 
 				ClassNotFoundException, 
@@ -87,6 +86,7 @@ public class Core {
 		return props;
 	}	
 	
+	@Deprecated
 	private static void executeComunicationClass(String packageComunication) 
 			throws ClassNotFoundException, 
 				IllegalAccessException, 

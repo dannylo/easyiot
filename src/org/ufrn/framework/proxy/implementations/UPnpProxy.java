@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.MappedByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,14 +26,17 @@ import org.teleal.cling.registry.Registry;
 import org.teleal.cling.registry.RegistryListener;
 import org.ufrn.framework.annotation.ProxyTranslate;
 import org.ufrn.framework.coapserver.SampleCoapServer;
-import org.ufrn.framework.database.access.Database;
+import org.ufrn.framework.database.access.DeviceManager;
 import org.ufrn.framework.proxy.interfaces.IProxy;
 import org.ufrn.framework.resources.DefaultCoapInputResource;
 import org.ufrn.framework.resources.DefaultCoapOutputResource;
 import org.ufrn.framework.util.ActionUpnpDefault;
 import org.ufrn.framework.util.ManagerFile;
 import org.ufrn.framework.virtualentity.Identification;
-import org.ufrn.framework.virtualentity.VirtualEntity;
+import org.ufrn.framework.virtualentity.VirtualDevice;
+
+import br.ufrn.framework.virtualentity.resources.Resource;
+
 
 @ProxyTranslate(description = "UPnP")
 public class UPnpProxy implements IProxy {
@@ -43,6 +47,7 @@ public class UPnpProxy implements IProxy {
 
 	public static final String ACTION_KEY = "ACTION_KEY";
 	public static final String SERVICE_KEY = "SERVICE_KEY";
+	
 
 	private boolean successOperation = false;
 
@@ -55,40 +60,34 @@ public class UPnpProxy implements IProxy {
 
 			@Override
 			public void remoteDeviceAdded(Registry registry, RemoteDevice device) {
-				VirtualEntity entity = new VirtualEntity();
-				entity.setIdentification(new Identification());
+				VirtualDevice entity = VirtualDevice.createInstance();
 				entity.getIdentification().setDescriptionName(device.getDisplayString());
 				entity.getIdentification().setIdProtocol(device.getType().getDisplayString());
 				entity.setServer(new CoapServer());
-
+				
 				for (RemoteService serviceRemote : device.getServices()) {
+					Resource resource = new Resource();
+					resource.setDescription(serviceRemote.getServiceId().getId());
 					mapServices.put(serviceRemote.getServiceId().getId(), serviceRemote);
 					for (Action action : serviceRemote.getActions()) {
-						StringBuilder actionCaptured = new StringBuilder();
-						System.out.println(action.getName() + " " + action.hasInputArguments());
 						if (!action.hasInputArguments()) {
-							System.out.println("NAO TEM ARGUMENTOS DE ENTRADA!");
-							actionCaptured.append(entity.getIdentification().getDescriptionName());
-							actionCaptured.append("@");
-							actionCaptured.append(action.getName());
-							actionCaptured.append(": ");
+							StringBuilder actionName = new StringBuilder(action.getName());
+							actionName.append(":");
 							Arrays.asList(action.getOutputArguments())
-									.forEach(argument -> actionCaptured.append(argument + ","));
-							actionsRepport.add(actionCaptured.toString());
+									.forEach(argument -> actionName.append(argument + ","));
+							resource.getAction().add(actionName.toString());
 
 							DefaultCoapOutputResource coap = new DefaultCoapOutputResource(action.getName(),
 									UPnpProxy.this, entity, serviceRemote.getServiceId().getId(), action.getName());
 							entity.getMappingResources().put(action.getName(), coap);
 							SampleCoapServer.getInstance().add(coap);
 						} else if(action.hasInputArguments()){
-							System.out.println("TEM ARGUMENTOS DE ENTRADA!");
-							actionCaptured.append(entity.getIdentification().getDescriptionName());
-							actionCaptured.append("@");
-							actionCaptured.append(action.getName() + "(");
+							StringBuilder actionName = new StringBuilder(action.getName());		
+							actionName.append(action.getName() + "(");
 							Arrays.asList(action.getInputArguments())
-									.forEach(argument -> actionCaptured.append(argument + ","));
-							actionCaptured.append(")");
-							actionsRepport.add(actionCaptured.toString());
+									.forEach(argument -> actionName.append(argument + ","));
+							actionName.append(")");
+							resource.getAction().add(actionName.toString());
 							
 							DefaultCoapInputResource coap = new DefaultCoapInputResource(action.getName(),
 									UPnpProxy.this, 
@@ -99,9 +98,9 @@ public class UPnpProxy implements IProxy {
 							SampleCoapServer.getInstance().add(coap);
 						}
 					}
+					entity.getResources().add(resource);
 				}
-				Database.register(entity);
-				System.out.println("qtd de registros - "+ actionsRepport.size());
+				DeviceManager.register(entity);
 				try {
 					ManagerFile.createFileActionsDiscovery(actionsRepport);
 				} catch (IOException e) {
@@ -127,7 +126,7 @@ public class UPnpProxy implements IProxy {
 	}
 
 	@Override
-	public Map<String, String> getData(VirtualEntity virtualEntity, Map<String, String> mappingArguments) {
+	public Map<String, String> getData(VirtualDevice virtualEntity, Map<String, String> mappingArguments) {
 		Service serviceUse = mapServices.get(mappingArguments.get(UPnpProxy.SERVICE_KEY));
 		Action action = serviceUse.getAction(mappingArguments.get(UPnpProxy.ACTION_KEY));
 		ActionInvocation actionInvocation = new ActionInvocation(action);
@@ -143,7 +142,7 @@ public class UPnpProxy implements IProxy {
 	}
 
 	@Override
-	public boolean send(VirtualEntity virtualEntity, Map<String, String> mappingArguments,
+	public boolean send(VirtualDevice virtualEntity, Map<String, String> mappingArguments,
 			Map<String, String> mappingValues) throws InterruptedException {
 		Service serviceUse = mapServices.get(mappingArguments.get(UPnpProxy.SERVICE_KEY));
 		Action action = serviceUse.getAction(mappingArguments.get(UPnpProxy.ACTION_KEY));

@@ -7,18 +7,34 @@ import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.swing.plaf.metal.MetalBorders.TableHeaderBorder;
+
+import org.ufrn.framework.database.access.DeviceManager;
+import org.ufrn.framework.virtualentity.VirtualDevice;
+
+import br.ufrn.framework.virtualentity.resources.Resource;
+
 public class ManagerFile {
 
-	/* The list should to admit name entity - action pattern.*/
+	/* The list should to admit name entity - action pattern. */
 	public static void createFileActionsDiscovery(List<String> mappingActions) throws IOException {
 		File file = new File("actions_discovered");
 		FileWriter fw = new FileWriter(file);
 		PrintWriter printer = new PrintWriter(fw);
-		printer.println("Pattern: Device name -> Action name enabled(input argument name): output argument name");
-		printer.println("----------------------------------------------------------------------------------------");		
-		for(String actionMapping: mappingActions) {
-			String[] breakString = actionMapping.split("@");
-			printer.println(breakString[0] + " -> "+ breakString[1]);
+		printer.println("ID | DEVICE | ACTION");
+		printer.println("");
+		for (VirtualDevice device : DeviceManager.getRegistred()) {			
+			for (Resource resource : device.getResources()) {
+				printer.println("RESOURCE: " + resource.getDescription());
+				printer.println("");
+				for(String actionName: resource.getAction()) {
+
+					printer.println(device.getIdentification().getId() 
+							+ " | " + device.getIdentification().getDescriptionName() + 
+							" | " + actionName);
+				}
+				printer.println("");
+			}
 		}
 		printer.close();
 		fw.close();
