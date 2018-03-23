@@ -11,18 +11,23 @@ import br.ufrn.framework.virtualentity.resources.ResourceManager;
 
 public class DemoMain {
 	
-	private static final String ACTION = "GetTemperature";
-	private static final String DEVICE = "Temp";
-	
 	public static void main(String[] args) {
 		Core.start();
 		
-		VirtualDevice router = DeviceManager.discovery(DEVICE).get(0);
+		VirtualDevice sensor1 = DeviceManager.discovery("Temp").get(0);
+		VirtualDevice termos = DeviceManager.discovery("Termo").get(0);
+		
 		HashMap<String, String> newValues = new HashMap<>();
-		newValues.put("TemperatureValue", "25");
+		newValues.put(ResourceManager.ConfigureTemperature.ParamInSetTemperatureValue, "25");
 		
 		try {
-			System.out.println(router.getDataEvent(ACTION));
+			//show the temperature value of sensor1
+			System.out.println(sensor1
+					.getDataEvent(ResourceManager.VerifyTemperature.GetTemperature));
+			
+			//to configure temperature value in termostate to 25 degree.
+			termos.sendEvent(ResourceManager.ConfigureTemperature.SetTemperatureValue, newValues);
+			
 		} catch (ResourceException e) {
 			e.printStackTrace();
 		}

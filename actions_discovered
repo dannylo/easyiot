@@ -1,13 +1,13 @@
 ID | DEVICE | ACTION
 
+RESOURCE: VerifyTemperature
+
+2 | Enterprise SenTempMod1 v1 | GetTemperature:(ActionArgument, OUT) temperature,
+
 RESOURCE: Layer3Forwarding1
 
 1 | D-LINK DIR-610 1.0.0 | SetDefaultConnectionServiceSetDefaultConnectionService((ActionArgument, IN) NewDefaultConnectionService,)
 1 | D-LINK DIR-610 1.0.0 | GetDefaultConnectionService:(ActionArgument, OUT) NewDefaultConnectionService,
-
-RESOURCE: VerifyTemperature
-
-2 | Enterprise SenTempMod1 v1 | GetTemperature:(ActionArgument, OUT) temperature,
 
 RESOURCE: ConfigureTemperature
 

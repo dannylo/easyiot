@@ -56,11 +56,10 @@ public class VirtualDevice extends ComunicableEntity {
 
 	public void sendEvent(String action, Map<String, String> newValues) {
 		DefaultCoapInputResource coapResource = (DefaultCoapInputResource) mappingResources.get(action);
-
+		
 		Gson gson = new Gson();
 		String json = gson.toJson(newValues);
-		// this.client = new CoapClient(actionCoap.getUrlAcess()); //??? TODO:
-		// Implementar esse método para os recursos de entrada do CoAP, e testar.
+		this.client = new CoapClient(coapResource.getUrlAcess()); 
 		this.client.put(json, MediaTypeRegistry.APPLICATION_JSON);
 	}
 
