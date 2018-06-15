@@ -12,6 +12,7 @@ import java.util.Map;
 import org.eclipse.californium.core.CoapServer;
 import org.teleal.cling.UpnpService;
 import org.teleal.cling.UpnpServiceImpl;
+import org.teleal.cling.android.AndroidUpnpServiceConfiguration;
 import org.teleal.cling.controlpoint.ActionCallback;
 import org.teleal.cling.model.action.ActionInvocation;
 import org.teleal.cling.model.message.UpnpResponse;
@@ -44,6 +45,7 @@ public class UPnpProxy implements IProxy {
 	private UpnpService upnpService;
 	private Map<String, Service> mapServices = new HashMap<>();
 	private List<String> actionsRepport = new ArrayList<>();
+	
 
 	public static final String ACTION_KEY = "ACTION_KEY";
 	public static final String SERVICE_KEY = "SERVICE_KEY";
@@ -63,6 +65,7 @@ public class UPnpProxy implements IProxy {
 				VirtualDevice entity = VirtualDevice.createInstance();
 				entity.getIdentification().setDescriptionName(device.getDisplayString());
 				entity.getIdentification().setIdProtocol(device.getType().getDisplayString());
+				entity.getIdentification().setMainFeature(device.getDetails().getModelDetails().getModelDescription());
 				entity.setServer(new CoapServer());
 				
 				for (RemoteService serviceRemote : device.getServices()) {
@@ -83,7 +86,7 @@ public class UPnpProxy implements IProxy {
 							SampleCoapServer.getInstance().add(coap);
 						} else if(action.hasInputArguments()){
 							StringBuilder actionName = new StringBuilder(action.getName());		
-							actionName.append(action.getName() + "(");
+							actionName.append("(");
 							Arrays.asList(action.getInputArguments())
 									.forEach(argument -> actionName.append(argument + ","));
 							actionName.append(")");
@@ -103,6 +106,7 @@ public class UPnpProxy implements IProxy {
 				DeviceManager.register(entity);
 				try {
 					ManagerFile.createFileActionsDiscovery(actionsRepport);
+					ManagerFile.print("actions_discovered");
 				} catch (IOException e) {
 					e.printStackTrace();
 				}

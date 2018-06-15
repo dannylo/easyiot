@@ -6,8 +6,8 @@ public final class ResourceManager {
 		public static final String GetTemperature = "GetTemperature";
 	}
 	
-	public static final class ConfigureTemperature{
-		public static final String SetTemperatureValue = "SetTemperatureValue";
-		public static final String ParamInSetTemperatureValue= "TemperatureValue";		
+	public static final class ConfigureTermostate{
+		public static final String NewValueTemp = "NewValueTemp";
+		public static final String NewValue= "newValue";		
 	}
 }

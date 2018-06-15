@@ -5,6 +5,7 @@ public class Identification {
 	private Long id;
 	private String idProtocol;
 	private String descriptionName;
+	private String mainFeature;
 	private String networkInfo;
 	
 	public Long getId() {
@@ -39,7 +40,13 @@ public class Identification {
 		this.idProtocol = idProtocol;
 	}
 	 
+	public String getMainFeature() {
+		return mainFeature;
+	}
 	
+	public void setMainFeature(String mainFeature) {
+		this.mainFeature = mainFeature;
+	}
 	
 	
 }

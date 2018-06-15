@@ -1,15 +1,16 @@
-ID | DEVICE | ACTION
+COAP SERVER: org.eclipse.californium.core.CoapServer@3dc9451
+ID | DEVICE | ACTION(ENDPOINT COAP)
 
 RESOURCE: VerifyTemperature
 
-2 | Enterprise SenTempMod1 v1 | GetTemperature:(ActionArgument, OUT) temperature,
-
-RESOURCE: Layer3Forwarding1
-
-1 | D-LINK DIR-610 1.0.0 | SetDefaultConnectionServiceSetDefaultConnectionService((ActionArgument, IN) NewDefaultConnectionService,)
-1 | D-LINK DIR-610 1.0.0 | GetDefaultConnectionService:(ActionArgument, OUT) NewDefaultConnectionService,
+3 | Enterprise SenTempMod1 v1 | GetTemperature:(ActionArgument, OUT) temperature,
 
 RESOURCE: ConfigureTemperature
 
-3 | Enterprise TermostateContrMod1 v1 | SetTemperatureValueSetTemperatureValue((ActionArgument, IN) TemperatureValue,)
+2 | Enterprise TermostateContrMod1 v1 | SetTemperatureValue((ActionArgument, IN) TemperatureValue,)
+
+RESOURCE: Layer3Forwarding1
+
+1 | D-LINK DIR-610 1.0.0 | SetDefaultConnectionService((ActionArgument, IN) NewDefaultConnectionService,)
+1 | D-LINK DIR-610 1.0.0 | GetDefaultConnectionService:(ActionArgument, OUT) NewDefaultConnectionService,
 

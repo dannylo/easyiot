@@ -45,8 +45,10 @@ public class DefaultCoapInputResource extends AbstractCoapResource {
 			Gson gson = new Gson();
 			mappingNewValues = gson.fromJson(value, Map.class);
 			boolean success = this.proxyAcess.send(virtualEntity, arguments, mappingNewValues);
-			Core.getLogger().info("The result of put method for " + actionDescription + " is " + success);
-			Core.getLogger().info("New value is setted: " +  value);
+			//Core.getLogger().info("The result of put method for " + actionDescription + " is " + success);
+			System.out.println("The result of put method for " + actionDescription + " is " + success);
+			//Core.getLogger().info("New value is setted: " +  value);
+			System.out.println("New value is setted: " +  value);
 			exchange.respond(ResponseCode.CHANGED, value);
 		} catch (Exception e) {
 			e.printStackTrace();

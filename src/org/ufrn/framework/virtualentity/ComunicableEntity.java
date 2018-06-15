@@ -14,7 +14,7 @@ public abstract class ComunicableEntity {
 
 	private List<HashMap<VirtualDevice, String>> interestedEntitys = new ArrayList<>();
 	
-	private Logger logger = Logger.getLogger(ComunicableEntity.class);
+	//private Logger logger = Logger.getLogger(ComunicableEntity.class);
 
 	public void registerActionListener(VirtualDevice entity, String actionDescription) {
 		
@@ -24,7 +24,8 @@ public abstract class ComunicableEntity {
 		HashMap<VirtualDevice, String> register = new HashMap<>();
 		register.put(entity, actionDescription);
 		interestedEntitys.add(register);
-		logger.info("A virtual entity "+ entity.getIdentification().getDescriptionName() + " was registered as a listener.");
+		//logger.info("A virtual entity "+ entity.getIdentification().getDescriptionName() + " was registered as a listener.");
+		System.out.println("A virtual entity "+ entity.getIdentification().getDescriptionName() + " was registered as a listener.");
 	}
 
 	@Deprecated
